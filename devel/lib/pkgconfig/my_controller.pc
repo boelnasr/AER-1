@@ -1,0 +1,8 @@
+prefix=/home/aboelnasr/Desktop/my_ws/devel
+
+Name: my_controller
+Description: Description of my_controller
+Version: 0.3.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
