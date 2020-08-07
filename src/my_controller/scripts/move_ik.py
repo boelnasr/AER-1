@@ -52,6 +52,12 @@ class MoveGroupPythonIntefaceTutorial(object):
 		# Copy class variables to local variables to make the web tutorials more clear.
 		# In practice, you should use the class variables directly unless you have a good
 		# reason not to.
+		x=input("enter x value")
+		y=input("enter y value")
+		z=input("enter z value")
+		roll=input("enter roll value")
+		pitch=input("enter pitch value")
+		yaw=input("enter yaw value")
 		move_group = self.move_group
 
 		## BEGIN_SUB_TUTORIAL plan_to_pose
@@ -61,13 +67,13 @@ class MoveGroupPythonIntefaceTutorial(object):
 		## We can plan a motion for this group to a desired pose for the
 		## end-effector:
                 pose_goal = geometry_msgs.msg.Pose()
-		pose_goal.position.x = 0.4
-		pose_goal.position.y = 0.1
-		pose_goal.position.z = 0.4
-		pose_goal.orientation.w = 1.0
-		pose_goal.orientation.x = 0.4
-		pose_goal.orientation.y = 0.1
-		pose_goal.orientation.z = 0.4
+		pose_goal.position.x = x
+		pose_goal.position.y = y
+		pose_goal.position.z = z
+		pose_goal.orientation.x = roll
+		pose_goal.orientation.y = pitch
+		pose_goal.orientation.z = yaw
+		pose_goal.orientation.w = 1
 
 
 		move_group.set_pose_target(pose_goal)

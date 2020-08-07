@@ -1,2 +1,2 @@
-my_controller:robot
+ds4_driver:my_controller:robot
 -DCATKIN_DEVEL_PREFIX=/home/aboelnasr/Desktop/my_ws/devel -DCMAKE_INSTALL_PREFIX=/home/aboelnasr/Desktop/my_ws/install -G Unix Makefiles
