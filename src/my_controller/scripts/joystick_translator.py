@@ -22,13 +22,13 @@ import time
 
 class Translator(object):
 	def __init__(self):
-		#super(Translator, self).__init__()
+		super(Translator, self).__init__()
 		## BEGIN_SUB_TUTORIAL setup
 		##
 		## First initialize `moveit_commander`_ and a `rospy`_ node:
 		moveit_commander.roscpp_initialize(sys.argv)
 		rospy.init_node('teleop_joystick', anonymous=True)
-		self._joystick_subscriber = rospy.Subscriber("status", Status, self.joystick_callback)
+		self._joystick_subscriber = rospy.Subscriber("status", Status, self.joystick_callback,queue_size=1)
 		self._last_published_time = rospy.get_rostime()
 		## Instantiate a `RobotCommander`_ object. Provides information such as the robot's
 		## kinematic model and the robot's current joint states
@@ -41,8 +41,14 @@ class Translator(object):
 		## trajectories in Rviz:
 		self.display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path',
 		moveit_msgs.msg.DisplayTrajectory,
-		queue_size=20)
-		self.translated_msg =Pose()
+		queue_size=1)
+		self.x=float(0.0)
+		self.y=float(0.0)
+		self.z=float(0.0)
+		self.roll=float(0.0)
+		self.pitch=float(0.0)
+		self.yaw=float(0.0)
+		# self.translated_msg =Pose()
 		# self.translated_msg.position.x=0.0
 		# self.translated_msg.position.y=0.0
 		# self.translated_msg.position.z=0.0
@@ -57,6 +63,8 @@ class Translator(object):
 	def joystick_callback(self, message):
 		# Create message objects
 		move_group = self.move_group
+		move_group.set_planning_time(5)
+		move_group.set_planner_id("SPARSConnectkConfigDefault")
 		py_flag=message.button_dpad_up
 		ny_flag=message.button_dpad_down	
 		px_flag=message.button_dpad_right
@@ -70,67 +78,58 @@ class Translator(object):
 		#n_pitch_flag=message.button_dpad_left
 		yaw_flag=message.axis_right_x
 		#n_yaw_flag=message.button_l2
-		excute_flag=message.button_r2
-		x=float(0.0)
-		y=float(0.0)
-		z=float(0.0)
-		roll=float(0.0)
-		pitch=float(0.0)
-		yaw=float(0.0)
-		if px_flag ==1:
-			x+=0.01
-			#print(self.translated_msg.position.x)
-			#print("+x")
 		
-		if nx_flag ==1:
-			x-=0.05
+		if px_flag :
+			self.x+=0.01			
+			print(px_flag)
+
+		
+		if nx_flag :
+			self.x-=0.05
 			
-		if py_flag ==1:
-			y+=0.05
+		if py_flag :
+			self.y+=0.05
 			
-		if ny_flag ==1:
-			y-=0.05
+		if ny_flag :
+			self.y-=0.05
 			
-		if pz_flag ==1:
-			z+=0.05
+		if pz_flag :
+			self.z+=0.05
 			
-		if nz_flag ==1:
-			z-=0.05
+		if nz_flag :
+			self.z-=0.05
 			
 		########################################
 		if roll_flag >0:
-			roll=0.05
+			self.roll+=0.05
 			
 		if roll_flag <0:
-			roll-=0.05
+			self.roll-=0.05
 			
 		if pitch_flag >0:
-			pitch+=0.05
+			self.pitch+=0.05
 			
 		if pitch_flag <0:
-			pitch-=0.05
+			self.pitch-=0.05
 			
 		if yaw_flag >0:
-			yaw+=0.05
+			self.yaw+=0.05
 			
 		if yaw_flag <0:
-			yaw-=0.05
-		self.move_group.set_pose_target(self.translated_msg)
-		if excute_flag ==1:
-			self.excute_goal()
-	    #######################################################    
+			self.yaw-=0.05
+			print(self.yaw)
+		
+		#######################################################    
 			
 		pose_goal = geometry_msgs.msg.Pose()
-		pose_goal.position.x = x
-		pose_goal.position.y = y
-		pose_goal.position.z = z
-		pose_goal.orientation.x = roll
-		pose_goal.orientation.y = pitch
-		pose_goal.orientation.z = yaw
+		pose_goal.position.x =0#self. x
+		pose_goal.position.y = 0#self.y
+		pose_goal.position.z = 0#self.z
+		pose_goal.orientation.x = self.roll
+		pose_goal.orientation.y = self.pitch
+		pose_goal.orientation.z = self.yaw
 		pose_goal.orientation.w = 1
-
-
-		move_group.set_pose_target(pose_goal)
+		self.move_group.set_pose_target(pose_goal)
 
 		## Now, we call the planner to compute the plan and execute it.
 		plan = move_group.go(wait=True)
